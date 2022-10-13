@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  reddit-api-test
+
+  Sample SAM Template for reddit-api-test
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+Resources:
+  GetAPIAccessToken:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get_api_access_token/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+  ApiTokenCache:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "bot_name"
+          AttributeType: "S"
+        - AttributeName: "expires"
+          AttributeType: "N"
+      KeySchema:
+        - AttributeName: "bot_name"
+          KeyType: "HASH"
+        - AttributeName: "expires"
+          KeyType: "RANGE"
+      TableName: "ApiTokenCache"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      TimeToLiveSpecification:
+        AttributeName: "expires"
+        Enabled: true
+  ApiConfig:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "bot_name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "bot_name"
+          KeyType: "HASH"
+      TableName: "ApiConfig"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
