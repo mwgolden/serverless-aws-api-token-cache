@@ -16,6 +16,9 @@ Resources:
       CodeUri: get_api_access_token/
       Handler: app.lambda_handler
       Runtime: python3.9
+      Policies:
+        - AmazonDynamoDBFullAccess
+        - SecretsManagerReadWrite
       Architectures:
         - x86_64
   ApiTokenCache:
