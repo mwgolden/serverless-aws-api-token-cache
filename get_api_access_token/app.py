@@ -50,7 +50,7 @@ def get_auth_token(bot_name, config) -> dict:
     else:
         clientid, clientsecret = get_client_credentials(secret_arn=config['client_secret_arn'])
         client_auth = requests.auth.HTTPBasicAuth(clientid, clientsecret)
-        data = {"grant_type":config['grant_type'], "scope": config['scope']}
+        data = {"grant_type":config['grant_type'], "scope": config['scope'], "X-Modhash": "xF3123"}
         headers = {"User-Agent": config['user_agent']}
         response = requests.post(config['auth_endpoint'], auth=client_auth, data=data, headers=headers).json()
         cache_token(bot_name=bot_name, data=response)
@@ -76,7 +76,7 @@ def cache_token(bot_name, data):
     )
 
 def lambda_handler(event, context):
-    bot_name = "reddit_bot"
+    bot_name = event["bot_name"]
     api_config = get_configuration(bot_name=bot_name)
     response_data = get_auth_token(bot_name=bot_name, config=api_config)
     return {
