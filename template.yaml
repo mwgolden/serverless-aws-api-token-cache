@@ -21,31 +21,18 @@ Resources:
         - SecretsManagerReadWrite
       Architectures:
         - x86_64
-  GetAPIAccessTokenPolicyRole:
-    Type: AWS::IAM::Role
+  InvokeGetAPIAccessTokenManagedPolicy:
+    Type: AWS::IAM::ManagedPolicy
     Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Service:
-                - "lambda.amazonaws.com"
-            Action: "sts:AssumeRole"
-  InvokeGetAPIAccessTokenPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: InvokeGetAPIAccessTokenPolicy
+      Description: grant access to invoke the apiaccesstoken lambda
+      Path: /
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Action:
               - "lambda:InvokeFunction"
-              - "lambda:InvokeAsync"
             Resource: !GetAtt GetAPIAccessToken.Arn
-      Roles:
-        - !Ref GetAPIAccessTokenPolicyRole
   ApiTokenCache:
     Type: AWS::DynamoDB::Table
     Properties:
