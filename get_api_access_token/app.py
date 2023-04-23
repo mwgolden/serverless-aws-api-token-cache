@@ -9,6 +9,7 @@ import requests.auth
 API_CONFIG_TABLE = 'ApiConfig'
 API_TOKEN_CACHE_TABLE = 'ApiTokenCache'
 
+
 def get_configuration(bot_name):
     db = boto3.resource('dynamodb')
     db_table = db.Table(API_CONFIG_TABLE)
@@ -18,6 +19,7 @@ def get_configuration(bot_name):
         }
     )
     return response['Item']['config']
+
 
 def get_cached_auth_token(bot_name):
     db = boto3.resource('dynamodb')
@@ -32,11 +34,13 @@ def get_cached_auth_token(bot_name):
     )
     return response
 
+
 def get_client_credentials(client_id, client_secret):
     ssm_client = boto3.client('ssm')
     client_id_param = ssm_client.get_parameter(Name=client_id)
     client_secret_param = ssm_client.get_parameter(Name=client_secret, WithDecryption=True)
-    return(client_id_param['Parameter']['Value'], client_secret_param['Parameter']['Value'])
+    return client_id_param['Parameter']['Value'], client_secret_param['Parameter']['Value']
+
 
 def get_auth_token(bot_name, config) -> dict:
     cached_token = get_cached_auth_token(bot_name=bot_name)
@@ -57,6 +61,7 @@ def get_auth_token(bot_name, config) -> dict:
         cache_token(bot_name=bot_name, data=response)
     return response
 
+
 def cache_token(bot_name, data):
     print(data)
     if 'expires_in' in data.keys():
@@ -75,6 +80,7 @@ def cache_token(bot_name, data):
                 'access_token': data
         }
     )
+
 
 def lambda_handler(event, context):
     bot_name = event["bot_name"]

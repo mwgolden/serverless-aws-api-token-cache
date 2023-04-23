@@ -1,0 +1,4 @@
+{
+  "bot_name": "reddit_bot",
+  "endpoint": "https://oauth.reddit.com/comments/y6kyll?sort=old&threaded=False"
+}
