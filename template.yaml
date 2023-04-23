@@ -13,6 +13,7 @@ Resources:
   GetAPIAccessToken:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: get_api_access_token
       CodeUri: get_api_access_token/
       Handler: app.lambda_handler
       Runtime: python3.9

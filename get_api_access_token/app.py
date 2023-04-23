@@ -32,13 +32,11 @@ def get_cached_auth_token(bot_name):
     )
     return response
 
-def get_client_credentials(secret_arn):
-    client = boto3.client('secretsmanager')
-    secret_value = client.get_secret_value(SecretId=secret_arn)
-    secret = json.loads(secret_value['SecretString'])
-    clientid = secret['username']
-    clientsecret = secret['password']
-    return (clientid, clientsecret)
+def get_client_credentials(client_id, client_secret):
+    ssm_client = boto3.client('ssm')
+    client_id_param = ssm_client.get_parameter(Name=client_id)
+    client_secret_param = ssm_client.get_parameter(Name=client_secret, WithDecryption=True)
+    return(client_id_param['Parameter']['Value'], client_secret_param['Parameter']['Value'])
 
 def get_auth_token(bot_name, config) -> dict:
     cached_token = get_cached_auth_token(bot_name=bot_name)
@@ -48,7 +46,10 @@ def get_auth_token(bot_name, config) -> dict:
         exp_date = cached_token['Items'][0]['expires']
         response['expires_in'] = exp_date - epoch_time
     else:
-        clientid, clientsecret = get_client_credentials(secret_arn=config['client_secret_arn'])
+        clientid, clientsecret = get_client_credentials(
+                client_id=config['client_id'],
+                client_secret=config['client_secret']
+            )
         client_auth = requests.auth.HTTPBasicAuth(clientid, clientsecret)
         data = {"grant_type":config['grant_type'], "scope": config['scope'], "X-Modhash": "xF3123"}
         headers = {"User-Agent": config['user_agent']}
