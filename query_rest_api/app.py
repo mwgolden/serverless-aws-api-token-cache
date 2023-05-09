@@ -1,6 +1,8 @@
 import requests
 import boto3
 import json
+from datetime import datetime
+import pytz
 
 API_CONFIG_TABLE = 'ApiConfig'
 
@@ -35,6 +37,8 @@ def query_api(api_endpoint, http_method, headers):
 
 
 def lambda_handler(event, context):
+    tz = pytz.timezone('US/Central')
+    now = datetime.now(tz)
     api_endpoint = event['endpoint']
     bot_name = event['bot_name']
     config = get_configuration(bot_name)
@@ -52,5 +56,6 @@ def lambda_handler(event, context):
         response = query_api(api_endpoint, http_method, headers)
     return {
         "statusCode": response.status_code,
+        "as_of": now.strftime('%Y-%m-%d %H:%M'),
         "body": response.json()
     }
