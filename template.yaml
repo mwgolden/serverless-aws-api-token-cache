@@ -10,6 +10,19 @@ Globals:
   Function:
     Timeout: 3
 Resources:
+  GetBotConfigurationFunction:
+    Type: AWS::Serverless::Function
+    Description: Retrieve bot configuration from DynamoDB table
+    Properties:
+      FunctionName: get_bot_configuration
+      CodeUri: get_bot_configuration/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Policies: 
+        - AmazonDynamoDBReadOnlyAccess
+      Architectures: 
+        - x86_64
+      Timeout: 30
   GetAPIAccessToken:
     Type: AWS::Serverless::Function
     Properties:
@@ -20,6 +33,12 @@ Resources:
       Policies:
         - AmazonDynamoDBFullAccess
         - AmazonSSMReadOnlyAccess
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - "lambda:InvokeFunction"
+              Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:get_bot_configuration'
       Architectures:
         - x86_64
       Timeout: 65

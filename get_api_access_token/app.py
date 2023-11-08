@@ -11,14 +11,15 @@ API_TOKEN_CACHE_TABLE = 'ApiTokenCache'
 
 
 def get_configuration(bot_name):
-    db = boto3.resource('dynamodb')
-    db_table = db.Table(API_CONFIG_TABLE)
-    response = db_table.get_item(
-        Key={
-            'bot_name': bot_name
-        }
+    client = boto3.client('lambda')
+    response = client.invoke(
+        FunctionName='get_bot_configuration',
+        InvocationType='RequestResponse',
+        Payload=json.dumps({'bot_name': bot_name})
     )
-    return response['Item']['config']
+    data = json.load(response['Payload'])
+    config = data['body']
+    return config
 
 
 def get_cached_auth_token(bot_name):
@@ -63,7 +64,6 @@ def get_auth_token(bot_name, config) -> dict:
 
 
 def cache_token(bot_name, data):
-    print(data)
     if 'expires_in' in data.keys():
         epoch_time = int(time.time())
         ttl_seconds =  data['expires_in']
