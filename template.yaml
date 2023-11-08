@@ -19,8 +19,10 @@ Resources:
       Runtime: python3.9
       Policies:
         - AmazonDynamoDBFullAccess
+        - AmazonSSMReadOnlyAccess
       Architectures:
         - x86_64
+      Timeout: 65
   QueryRestAPIFunction:
     Type: AWS::Serverless::Function
     Properties:
