@@ -47,6 +47,13 @@ def lambda_handler(event, context):
     if not needs_auth:
         headers = {"User-Agent": f"{config['user_agent']}"}
         response = query_api(api_endpoint, http_method, headers)
+    elif config.get('api_key'):
+        api_key = config['api_key']
+        headers = {
+            "Authorization": api_key,
+            "User-Agent": f"{config['user_agent']}"
+        }
+        response = query_api(api_endpoint, http_method, headers)
     else:
         api_token = get_api_token({'bot_name': bot_name})
         headers = {

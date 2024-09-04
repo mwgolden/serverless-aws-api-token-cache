@@ -1,0 +1,4 @@
+{
+    "bot_name": "radar",
+    "endpoint": "https://api.radar.io/v1/geocode/forward?query=dallas+tx+N Jim Miller Rd / I30 East"
+  }
